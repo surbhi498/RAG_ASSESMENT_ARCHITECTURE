@@ -80,6 +80,8 @@ Orchestrator: http://127.0.0.1:3000
 
 MongoDB Atlas: configured via MONGO_URI in .env or docker-compose
 
+## sample.txt(Data), ingest.py, lora_inference.py, simple.ipynb(for running fine-tuning by lora) is there in scripts folder.
+
 ## API Specifications
 Embedding Service
 
