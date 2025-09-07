@@ -16,20 +16,37 @@ The system allows you to ingest documents, perform context-aware queries, and ap
 
 ## 🏗 Architecture
 
-    +-----------------+          +-------------------+
-    |                 |          |                   |
-    |  Python         |          |  Node.js          |
-    |  Embedding      |<-------->|  Orchestrator     |
-    |  Service (API)  |          |  (API / LLM)      |
-    |                 |          |                   |
-    +--------+--------+          +--------+----------+
-             |                            
-             |                           
-             v                         
-    +-----------------+          +-------------------+
-    | MongoDB Atlas   |          |  LoRA Adapter     |
-    | Vector Store    |          |  (PEFT)           |
-    +-----------------+          +-------------------+
+                         +-------------------+
+                         |                   |
+                         |  Node.js          |
+                         |  Orchestrator     |
+                         |  (API / LLM)      |
+                         |                   |
+                         +---------⇄---------+
+                                   |
+                                   | 
+                                   v
+                         +-------------------+
+                         |                   |
+                         |  Python Embedding |
+                         |  Service (API)    |
+                         |                   |
+                         +---------⇄---------+
+                                   |
+                                   | Stores / retrieves embeddings
+                                   v
+                         +-------------------+
+                         |                   |
+                         | MongoDB Atlas     |
+                         | Vector Store      |
+                         |                   |
+                         +-------------------+
+
+✅ Explanation of double arrows (⇄):
+
+Between Node orchestrator and Python service: query sent → embedding/context returned.
+
+Between Python service and MongoDB: embedding upsert & retrieval are bidirectional.
 
 
 ---
