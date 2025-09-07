@@ -2,7 +2,7 @@
 # =====================
 venv/
 .venv1/
-.env/ 
+env/
 # Node.js
 # =====================
 node_modules/
