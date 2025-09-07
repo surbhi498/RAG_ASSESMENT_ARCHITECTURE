@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
 from sentence_transformers import SentenceTransformer
@@ -7,53 +7,34 @@ import os
 import time
 from dotenv import load_dotenv
 
-# Determine project root dynamically
+# Load .env from project root
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 dotenv_path = os.path.join(BASE_DIR, ".env")
 load_dotenv(dotenv_path)
 
-# Debug: print to confirm env variables are loaded
-print("MONGO_URI:", os.getenv("MONGO_URI"))
-app = FastAPI()
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
-# ----- Config -----
+print("DEBUG - MONGO_URI:", os.getenv("MONGO_URI"))
+
 MONGO_URI = os.getenv("MONGO_URI")
 if not MONGO_URI:
     raise ValueError("MONGO_URI environment variable not set!")
 
+# Initialize MongoDB client
 client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-
 try:
     client.admin.command("ping")
     print("✅ Connected to MongoDB Atlas")
 except Exception as e:
     print("❌ MongoDB connection failed:", e)
 
-
 DB_NAME = "rag_db"
 COLLECTION_NAME = "docs"
+db = client[DB_NAME]
+collection = db[COLLECTION_NAME]
 
-# Mongo connection
-# ...existing code...
-try:
-    client = MongoClient(MONGO_URI)
-    db = client[DB_NAME]
-    collection = db[COLLECTION_NAME]
-except Exception as e:
-    print(f"MongoDB connection error: {e}")
-# # ...existing code...
-# client = MongoClient(MONGO_URI)
-# db = client[DB_NAME]
-# collection = db[COLLECTION_NAME]
-
-# Ensure vector index exists in Atlas manually or via Atlas UI
-# Example: create index on "embedding" field with type "vector" (cosine)
-
-# SentenceTransformer model
+# Initialize SentenceTransformer
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
-# FastAPI app
-
+app = FastAPI()
 
 # ----- Models -----
 class Doc(BaseModel):
@@ -91,8 +72,10 @@ def bulk_embed(payload: BulkDocs):
             "embedding": vector,
             "created_at": time.time()
         })
+
     for d in docs:
         collection.update_one({"_id": d["_id"]}, {"$set": d}, upsert=True)
+
     return {"upserted": len(docs)}
 
 @app.post("/search")
@@ -105,10 +88,11 @@ def search(req: SearchRequest):
                 "path": "embedding",
                 "numCandidates": 100,
                 "limit": req.k,
-                "index": "vector_index"  # name of your Atlas search index
+                "index": "vector_index"
             }
         },
         {"$project": {"text": 1, "score": {"$meta": "vectorSearchScore"}}}
     ]
+
     results = list(collection.aggregate(pipeline))
     return {"results": results}
