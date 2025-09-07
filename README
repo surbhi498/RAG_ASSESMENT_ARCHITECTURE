@@ -23,9 +23,9 @@ The system allows you to ingest documents, perform context-aware queries, and ap
     |  Service (API)  |          |  (API / LLM)      |
     |                 |          |                   |
     +--------+--------+          +--------+----------+
-             |                            |
-             |                            |
-             v                            v
+             |                            
+             |                           
+             v                         
     +-----------------+          +-------------------+
     | MongoDB Atlas   |          |  LoRA Adapter     |
     | Vector Store    |          |  (PEFT)           |
@@ -47,7 +47,13 @@ python3 -m venv .venv1
 source .venv1/bin/activate
 pip install -r requirements1.txt
 
-## Start services using Docker Compose
+## Starting the Embedding Service through Flask API use following command:
+uvicorn main:app --reload --host 0.0.0.0 --port 8001 
+## Start the Node js Orchestrator Service for Chatting:
+npm install -g nodemon
+nodemon index.js
+
+## Start services using Docker Compose or can check these endpoints in Postman
 
 docker-compose up --build
 
@@ -129,6 +135,8 @@ Ingesting documents
 Querying the RAG system
 
 Loading and applying a LoRA adapter
+
+## Run this Command in Terminal
 
 chmod +x demo_script.sh
 ./demo_script.sh
