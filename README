@@ -178,3 +178,40 @@ This README includes:
 - Clean ASCII architecture diagram  
 - Step-by-step local setup  
 - API endpoints with request
+
+## Short Cover Letter:
+
+# Cover Note for RAG Assessment Project
+
+## Assumptions
+1. **Vector Store:** Using MongoDB Atlas with vector search enabled. FAISS is provided as a local alternative but not used in production.
+2. **Embedding Service:** Python FastAPI service generates embeddings via OpenAI or local transformer models.
+3. **Orchestrator:** Node.js/Express service handles query orchestration, retrieves top-k relevant documents, and calls an LLM for answers.
+4. **LoRA Adapter:** DistilGPT2 small model is used for fine-tuning demonstrations. The adapter is applied locally; no hosted inference endpoint is provided.
+5. **Document Chunking:** Basic chunking implemented with configurable size and overlap. Large-scale optimizations not included.
+
+## Shortcuts Taken
+1. **Training Data:** Toy examples are used for LoRA/PEFT fine-tuning instead of large-scale datasets.
+2. **Local Testing:** Services are mostly tested on `localhost`; container orchestration tested with Docker Compose on a single machine.
+3. **Security:** Secrets such as API keys are included in `.env` for local testing but excluded from Git via `.gitignore`. GitHub push protection blocked earlier pushes containing secrets.
+4. **Docker Images:** Lightweight images created, volumes mapped locally. No cloud deployment automation.
+
+## Known Incomplete / Limitations
+1. **Scaling & Latency:** The pipeline is not optimized for high-volume queries or concurrent users.
+2. **LoRA Adapter Integration:** Only CPU-based inference is demonstrated. GPU optimization is not included.
+3. **Error Handling:** Minimal error handling in orchestrator and embedding service.
+4. **Persistence of Large Files:** Model weights and adapters are excluded from the Git repo to comply with GitHub size limits; users must download or generate them locally.
+
+## Notes
+- All services can be run locally using Docker Compose.
+- `.env` file must be created with valid keys for OpenAI or Hugging Face access.
+- Curl or Postman scripts provided for demo of:
+  1. Document ingestion
+  2. Querying with context-aware answers
+  3. Loading LoRA adapter for inference
+- The project demonstrates a proof-of-concept for Retrieval-Augmented Generation (RAG) using lightweight components.
+
+---
+
+**Author:** Surbhi Sharma  
+**Date:** September 2025
