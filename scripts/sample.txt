@@ -1,0 +1,15 @@
+RAG stands for Retrieval-Augmented Generation. It is a system that combines retrieval of documents with LLM generation to produce context-aware answers. RAG is widely used in chatbots, QA systems, and recommendation engines.
+
+MongoDB Atlas is a cloud-hosted database service. It supports vector search and full-text search. You can store both operational data and vector embeddings in Atlas. IP Access Lists allow you to control which clients can connect to your cluster.
+
+SentenceTransformers is a Python library for computing dense vector embeddings from text. Models like all-MiniLM-L6-v2 are small, fast, and provide good semantic embeddings.
+
+FastAPI is a modern Python web framework that allows you to build APIs quickly. Uvicorn is an ASGI server commonly used to run FastAPI apps asynchronously.
+
+Docker lets you containerize applications, making it easier to deploy services consistently across different environments. Node.js is a JavaScript runtime, and Express.js is a lightweight framework for building APIs in Node.js.
+
+Hugging Face hosts many pretrained transformer models, including T5, BERT, GPT, and Flan-T5. LoRA (Low-Rank Adaptation) allows efficient fine-tuning of large models without retraining all weights.
+
+Vector embeddings allow semantic comparison between pieces of text. Cosine similarity is often used to measure closeness. FAISS is a library for fast nearest neighbor search over dense vectors.
+
+Chunking long text into smaller pieces improves retrieval quality in RAG systems. JSON is a common format for exchanging data between services. Python virtual environments help isolate project dependencies.

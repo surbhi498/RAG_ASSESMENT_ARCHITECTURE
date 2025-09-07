@@ -1,0 +1,14 @@
+# Virtual environments
+# =====================
+venv/
+.venv1/
+.env/ 
+# Node.js
+# =====================
+node_modules/
+
+.vscode/ 
+
+# LoRA / PEFT / HuggingFace Models
+# =====================
+scripts/lora_distilgpt2/

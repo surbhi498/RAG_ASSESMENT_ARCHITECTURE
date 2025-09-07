@@ -1,0 +1,172 @@
+# RAG Project: Retrieval-Augmented Generation with LoRA
+
+## 🚀 Overview
+
+This project demonstrates a **Retrieval-Augmented Generation (RAG)** pipeline using:
+
+- **Python FastAPI** embedding service
+- **Node.js/Express** orchestrator
+- **MongoDB Atlas** vector store
+- **LoRA adapters** for lightweight fine-tuning of transformer models
+- **Hugging Face Transformers + PEFT** for adapter training and inference
+
+The system allows you to ingest documents, perform context-aware queries, and apply LoRA adapters for efficient model customization.
+
+---
+
+## 🏗 Architecture
+
+    +-----------------+          +-------------------+
+    |                 |          |                   |
+    |  Python         |          |  Node.js          |
+    |  Embedding      |<-------->|  Orchestrator     |
+    |  Service (API)  |          |  (API / LLM)      |
+    |                 |          |                   |
+    +--------+--------+          +--------+----------+
+             |                            |
+             |                            |
+             v                            v
+    +-----------------+          +-------------------+
+    | MongoDB Atlas   |          |  LoRA Adapter     |
+    | Vector Store    |          |  (PEFT)           |
+    +-----------------+          +-------------------+
+
+
+---
+
+## 📦 Running Locally
+
+### 1. Clone repository
+
+```bash
+git clone https://github.com/surbhi498/RAG_ASSESMENT_ARCHITECTURE.git
+cd rag_assesment
+
+## Create virtual environment for Python3
+python3 -m venv .venv1
+source .venv1/bin/activate
+pip install -r requirements1.txt
+
+## Start services using Docker Compose
+
+docker-compose up --build
+
+Embedding Service: http://0.0.0.0:8001
+
+Orchestrator: http://127.0.0.1:3000
+
+MongoDB Atlas: configured via MONGO_URI in .env or docker-compose
+
+## API Specifications
+Embedding Service
+
+POST /embed
+
+{
+  "id": "doc_1",
+  "text": "Your document text here."
+}
+
+
+Response:
+
+{
+  "id": "doc_1",
+  "embedding": [0.1, 0.2, ...]
+}
+
+
+POST /bulk_embed
+
+Accepts a list of documents for batch embedding and upsert.
+
+Orchestrator Service
+
+POST /chat
+
+{
+  "user_id": "user123",
+  "query": "What is RAG?",
+  "k": 5
+}
+
+
+Response:
+
+{
+  "answer": "Retrieval-Augmented Generation (RAG) combines...",
+  "source_docs": ["doc_1", "doc_2"],
+  "timing_ms": 123
+}
+
+⚡ LoRA Adapter Inference
+
+Load and apply a saved LoRA adapter:
+
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from peft import PeftModel
+
+# Load base model and tokenizer
+base_model = AutoModelForCausalLM.from_pretrained("distilgpt2")
+tokenizer = AutoTokenizer.from_pretrained("distilgpt2")
+tokenizer.pad_token = tokenizer.eos_token
+base_model.resize_token_embeddings(len(tokenizer))
+
+# Load LoRA adapter
+model = PeftModel.from_pretrained(base_model, "scripts/lora_distilgpt2", ignore_mismatched_sizes=True)
+
+# Generate response
+inputs = tokenizer("What is the capital of France?", return_tensors="pt", padding=True)
+output_ids = model.generate(inputs.input_ids, max_new_tokens=10, pad_token_id=tokenizer.eos_token_id)
+print(tokenizer.decode(output_ids[0], skip_special_tokens=True))
+
+🧪 Demo Script
+
+A short shell demo (demo_script.sh) illustrates:
+
+Ingesting documents
+
+Querying the RAG system
+
+Loading and applying a LoRA adapter
+
+chmod +x demo_script.sh
+./demo_script.sh
+
+⚖️ Notes, Tradeoffs, and Scaling
+
+Tradeoffs: Using LoRA adapters reduces memory usage and fine-tuning costs compared to full model fine-tuning.
+
+Scaling: Docker Compose is suitable for local testing. For production, use Kubernetes or cloud services with GPU support.
+
+Cost / Latency: Vector search in MongoDB Atlas is faster than CPU-based FAISS for small datasets. GPU inference significantly reduces latency for transformer-based models.
+
+📂 File Structure
+RAG_ASSESMENT/
+├── scripts/
+│   ├── lora_inference.py
+│   └── lora_distilgpt2/
+├── embedding_service/
+│   ├── main.py
+│   └── Dockerfile
+├── orchestrator/
+│   ├── server.js
+│   └── Dockerfile
+├── docker-compose.yml
+├── demo_script.sh
+└── README.md
+
+🔗 References
+
+Hugging Face Transformers
+
+PEFT / LoRA
+
+MongoDB Atlas Vector Search
+
+
+This README includes:
+
+- Clean ASCII architecture diagram  
+- Step-by-step local setup  
+- API endpoints with request
