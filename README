@@ -78,7 +78,17 @@ Embedding Service: http://0.0.0.0:8001
 
 Orchestrator: http://127.0.0.1:3000
 
-MongoDB Atlas: configured via MONGO_URI in .env or docker-compose
+MongoDB Atlas: configured via MONGO_URI in .env or docker-compose 
+
+## Kubernetes (minikube)
+
+kubectl apply -f kubernetes-deployment.yaml
+kubectl get pods
+minikube service orchestrator --url
+
+Orchestrator NodePort available via Minikube IP (e.g., http://192.168.49.2:30080)
+
+Embedding service accessible via ClusterIP internally
 
 ## sample.txt(Data), ingest.py, lora_inference.py, simple.ipynb(for running fine-tuning by lora) is there in scripts folder.
 
