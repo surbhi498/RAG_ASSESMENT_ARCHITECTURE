@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: embedding-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: embedding-service
+  template:
+    metadata:
+      labels:
+        app: embedding-service
+    spec:
+      containers:
+        - name: embedding-service
+          image: rag_assesment-embedding_service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8001
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: MONGO_URI
+              value: "mongodb+srv://rag_user:Surbhi08%40@rag-project.qgbadfw.mongodb.net/rag_db?retryWrites=true&w=majority&appName=rag-project"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: embedding-service
+spec:
+  selector:
+    app: embedding-service
+  ports:
+    - port: 8001
+      targetPort: 8001
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orchestrator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orchestrator
+  template:
+    metadata:
+      labels:
+        app: orchestrator
+    spec:
+      containers:
+        - name: orchestrator
+          image: rag_assesment-orchestrator:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: EMBEDDING_URL
+              value: "http://embedding-service:8001" 
+            - name: HF_API_KEY
+              value: "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"  
+            - name: MONGO_URI
+              value: "mongodb+srv://rag_user:Surbhi08%40@rag-project.qgbadfw.mongodb.net/rag_db?retryWrites=true&w=majority&appName=rag-project"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orchestrator
+spec:
+  selector:
+    app: orchestrator
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30080
+  type: NodePort

@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+print(f"BASE_DIR: {BASE_DIR}")
 dotenv_path = os.path.join(BASE_DIR, ".env")
 print(f"Loading .env from: {dotenv_path}")
 load_dotenv(dotenv_path)

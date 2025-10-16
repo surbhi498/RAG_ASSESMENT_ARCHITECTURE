@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  embedding_service:
+    build: ./services/embedding_service
+    container_name: embedding_service
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./services/embedding_service:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MONGO_URI=mongodb+srv://rag_user:Surbhi08%40@rag-project.qgbadfw.mongodb.net/rag_db?retryWrites=true&w=majority&appName=rag-project
+
+  orchestrator:
+    build: ./services/orchestrator
+    container_name: orchestrator 
+    ports:
+      - "3000:3000" 
+    env_file:
+      - ./.env   
+    depends_on:
+      - embedding_service
+    environment:
+      - MONGO_URI=mongodb+srv://rag_user:Surbhi08%40@rag-project.qgbadfw.mongodb.net/rag_db?retryWrites=true&w=majority&appName=rag-project 
+      - EMBEDDING_URL=http://embedding_service:8001

@@ -38,7 +38,7 @@ curl -X POST "${ORCHESTRATOR_URL}/chat" \
 echo -e "\nQuery complete.\n"
 
 echo "=== Step 3: Loading and applying a saved LoRA adapter for inference ==="
-python3 ./scripts/lora_inference.py
+python3 lora_inference.py
 
 
 

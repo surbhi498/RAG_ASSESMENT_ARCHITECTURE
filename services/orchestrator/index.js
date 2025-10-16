@@ -3,7 +3,9 @@ import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
 import dotenv from 'dotenv';
-dotenv.config({ path: '../../.env', debug: true });
+// dotenv.config({ path: '../../.env', debug: true });
+dotenv.config();
+
 const app = express();
 app.use(express.json());
 app.use(cors());
